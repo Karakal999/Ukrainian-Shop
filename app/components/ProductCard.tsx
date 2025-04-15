@@ -1,22 +1,35 @@
 "use client";
 
+import {
+  Card,
+  AspectRatio,
+  Box,
+  Typography,
+  Button,
+  IconButton,
+} from "@mui/joy";
+import { ShoppingBag, Add, Remove } from "@mui/icons-material";
 import Image from "next/image";
-import { Card, CardContent, Typography, Button, AspectRatio } from "@mui/joy";
-import { ShoppingBag } from "@mui/icons-material";
+import { Product } from "./ProductList";
+import { useCart } from "../contexts/CartContext";
 import { useLanguage } from "../contexts/LanguageContext";
+import {
+  getCurrencyFromLanguage,
+  formatCurrency,
+  convertPrice,
+} from "../utils/currencyConverter";
 
 interface ProductCardProps {
-  product: {
-    name: string;
-    price: number;
-    image: string;
-    category: string;
-  };
+  product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const { translations } = useLanguage();
+  const { addToCart, items, updateQuantity, removeFromCart } = useCart();
+  const { translations, language } = useLanguage();
   const t = translations.shop;
+  const currency = getCurrencyFromLanguage(language);
+
+  const cartItem = items.find((item) => item.id === product.id);
 
   return (
     <Card
@@ -25,7 +38,6 @@ export default function ProductCard({ product }: ProductCardProps) {
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        position: "relative",
         "&:hover": {
           "& .MuiAspectRatio-root": {
             transform: "scale(1.05)",
@@ -41,38 +53,68 @@ export default function ProductCard({ product }: ProductCardProps) {
           style={{ objectFit: "cover" }}
         />
       </AspectRatio>
-      <CardContent
-        sx={{ flexGrow: 1, display: "flex", flexDirection: "column" }}
-      >
-        <Typography level="title-lg" sx={{ color: "text.primary", mb: 1 }}>
+      <Box sx={{ p: 2, flexGrow: 1 }}>
+        <Typography
+          level="title-lg"
+          sx={{ mb: 0.5, minHeight: "3em", lineHeight: "1.5em" }}
+        >
           {product.name}
         </Typography>
-        <Typography level="body-sm" sx={{ color: "text.secondary", mb: 2 }}>
+        <Typography level="body-sm" sx={{ mb: 2, color: "text.secondary" }}>
           {product.category}
         </Typography>
         <Typography
           level="h4"
-          sx={{
-            color: "primary.500",
-            fontWeight: "bold",
-            mb: 2,
-          }}
+          sx={{ color: "primary.500", fontWeight: "bold", mb: 2 }}
         >
-          {t.products.currency}
-          {product.price.toFixed(2)}
+          {formatCurrency(convertPrice(product.price, currency), currency)}
         </Typography>
-        <Button
-          size="lg"
-          color="primary"
-          startDecorator={<ShoppingBag />}
-          fullWidth
-          sx={{
-            mt: "auto",
-          }}
-        >
-          {t.products.addToCart}
-        </Button>
-      </CardContent>
+
+        {cartItem ? (
+          <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+            <IconButton
+              size="sm"
+              variant="outlined"
+              color="neutral"
+              onClick={() =>
+                updateQuantity(product.id, Math.max(0, cartItem.quantity - 1))
+              }
+            >
+              <Remove />
+            </IconButton>
+            <Typography
+              level="body-lg"
+              sx={{ minWidth: "2em", textAlign: "center" }}
+            >
+              {cartItem.quantity}
+            </Typography>
+            <IconButton
+              size="sm"
+              variant="outlined"
+              color="neutral"
+              onClick={() => updateQuantity(product.id, cartItem.quantity + 1)}
+            >
+              <Add />
+            </IconButton>
+            <Button
+              color="danger"
+              variant="soft"
+              sx={{ ml: "auto" }}
+              onClick={() => removeFromCart(product.id)}
+            >
+              {t.products.removeFromCart}
+            </Button>
+          </Box>
+        ) : (
+          <Button
+            fullWidth
+            startDecorator={<ShoppingBag />}
+            onClick={() => addToCart(product)}
+          >
+            {t.products.addToCart}
+          </Button>
+        )}
+      </Box>
     </Card>
   );
 }

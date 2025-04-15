@@ -3,168 +3,180 @@
 import { useState } from "react";
 import Link from "next/link";
 import {
-  Sheet,
+  Box,
   IconButton,
   List,
   ListItem,
   ListItemButton,
+  Sheet,
   Typography,
-  Box,
+  Badge,
 } from "@mui/joy";
-import {
-  Menu as MenuIcon,
-  Close as CloseIcon,
-  Translate as TranslateIcon,
-} from "@mui/icons-material";
+import { Menu, Close, ShoppingBag } from "@mui/icons-material";
 import { useLanguage } from "../contexts/LanguageContext";
-
-const navItems = [
-  { path: "/", key: "home" },
-  { path: "/shop", key: "shop" },
-  { path: "/about", key: "about" },
-  { path: "/contact", key: "contact" },
-] as const;
+import { useCart } from "../contexts/CartContext";
 
 export default function Navigation() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const { translations, language, toggleLanguage } = useLanguage();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { translations, toggleLanguage, language } = useLanguage();
+  const { totalItems } = useCart();
   const t = translations.navigation;
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
+  const menuItems = [
+    { href: "/", label: t.home },
+    { href: "/shop", label: t.shop },
+    { href: "/about", label: t.about },
+    { href: "/contact", label: t.contact },
+  ];
 
   return (
-    <Box component="nav">
-      <Sheet
+    <Sheet
+      component="nav"
+      sx={{
+        position: "fixed",
+        width: "100%",
+        top: 0,
+        zIndex: 1000,
+        p: 2,
+        bgcolor: "background.surface",
+        boxShadow: "sm",
+      }}
+    >
+      <Box
         sx={{
           display: "flex",
           alignItems: "center",
-          position: "fixed",
-          width: "100%",
-          top: 0,
-          zIndex: 1100,
-          px: 2,
-          py: 1,
-          gap: 2,
-          borderBottom: "1px solid",
-          borderColor: "divider",
+          maxWidth: "lg",
+          mx: "auto",
+          position: "relative",
         }}
       >
-        <IconButton
-          onClick={handleDrawerToggle}
-          sx={{ display: { sm: "none" } }}
-        >
-          <MenuIcon />
-        </IconButton>
-
         <Typography
+          level="h4"
           component={Link}
           href="/"
-          level="h4"
           sx={{
-            flexGrow: { xs: 1, sm: 0 },
             textDecoration: "none",
             color: "primary.500",
+            fontWeight: "bold",
+            position: "absolute",
+            left: 0,
           }}
         >
-          {t.logo}
+          {t.title}
         </Typography>
 
+        {/* Desktop Menu */}
         <List
           role="menubar"
           orientation="horizontal"
           sx={{
-            display: { xs: "none", sm: "flex" },
-            flexGrow: 1,
-            justifyContent: "center",
+            display: { xs: "none", md: "flex" },
             gap: 2,
+            mx: "auto",
+            width: "fit-content",
           }}
         >
-          {navItems.map((item) => (
-            <ListItem key={item.key}>
+          {menuItems.map((item) => (
+            <ListItem key={item.href}>
               <ListItemButton
                 component={Link}
-                href={item.path}
-                sx={{
-                  borderRadius: "md",
-                  color: "text.primary",
-                  "&:hover": {
-                    bgcolor: "background.level1",
-                  },
-                }}
+                href={item.href}
+                sx={{ borderRadius: "sm" }}
               >
-                {t[item.key]}
+                {item.label}
               </ListItemButton>
             </ListItem>
           ))}
+          <ListItem>
+            <ListItemButton onClick={toggleLanguage}>
+              {language === "en" ? "🇺🇦 UA" : "🇬🇧 EN"}
+            </ListItemButton>
+          </ListItem>
         </List>
 
-        <IconButton
-          onClick={toggleLanguage}
-          variant="outlined"
+        {/* Cart and Mobile Menu Button */}
+        <Box
           sx={{
-            ml: "auto",
-            display: { xs: "none", sm: "flex" },
+            display: "flex",
+            gap: 2,
+            position: "absolute",
+            right: 0,
           }}
         >
-          <TranslateIcon />
-          <Typography level="body-sm" sx={{ ml: 1 }}>
-            {language.toUpperCase()}
-          </Typography>
-        </IconButton>
-      </Sheet>
-
-      {/* Mobile drawer */}
-      <Sheet
-        sx={{
-          display: { xs: mobileOpen ? "block" : "none", sm: "none" },
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          zIndex: 1200,
-        }}
-      >
-        <Box sx={{ p: 2, display: "flex", alignItems: "center" }}>
-          <IconButton onClick={handleDrawerToggle}>
-            <CloseIcon />
-          </IconButton>
-          <Typography level="h4" sx={{ ml: 2, color: "primary.500" }}>
-            {t.menu}
-          </Typography>
           <IconButton
-            onClick={toggleLanguage}
+            component={Link}
+            href="/cart"
             variant="outlined"
-            sx={{ ml: "auto" }}
+            color="neutral"
+            sx={{ display: { xs: "none", md: "flex" } }}
           >
-            <TranslateIcon />
-            <Typography level="body-sm" sx={{ ml: 1 }}>
-              {language.toUpperCase()}
-            </Typography>
+            <Badge badgeContent={totalItems} color="primary">
+              <ShoppingBag />
+            </Badge>
+          </IconButton>
+          <IconButton
+            variant="outlined"
+            color="neutral"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            sx={{ display: { xs: "flex", md: "none" } }}
+          >
+            {mobileMenuOpen ? <Close /> : <Menu />}
           </IconButton>
         </Box>
-        <List>
-          {navItems.map((item) => (
-            <ListItem key={item.key}>
-              <ListItemButton
-                component={Link}
-                href={item.path}
-                onClick={handleDrawerToggle}
-                sx={{
-                  color: "text.primary",
-                  "&:hover": {
-                    bgcolor: "background.level1",
-                  },
-                }}
-              >
-                {t[item.key]}
+      </Box>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: "64px",
+            left: 0,
+            right: 0,
+            bgcolor: "background.surface",
+            p: 2,
+            display: { xs: "block", md: "none" },
+            boxShadow: "sm",
+          }}
+        >
+          <List>
+            {menuItems.map((item) => (
+              <ListItem key={item.href}>
+                <ListItemButton
+                  component={Link}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </ListItemButton>
+              </ListItem>
+            ))}
+            <ListItem>
+              <ListItemButton onClick={toggleLanguage}>
+                {language === "en" ? "🇺🇦 UA" : "🇬🇧 EN"}
               </ListItemButton>
             </ListItem>
-          ))}
-        </List>
-      </Sheet>
-    </Box>
+            <ListItem>
+              <ListItemButton
+                component={Link}
+                href="/cart"
+                onClick={() => setMobileMenuOpen(false)}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 2,
+                }}
+              >
+                <Badge badgeContent={totalItems} color="primary">
+                  <ShoppingBag />
+                </Badge>
+                <Typography>{t.cart}</Typography>
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </Box>
+      )}
+    </Sheet>
   );
 }

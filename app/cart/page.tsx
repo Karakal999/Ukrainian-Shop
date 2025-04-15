@@ -1,129 +1,183 @@
+"use client";
+
+import {
+  Box,
+  Typography,
+  Button,
+  IconButton,
+  Table,
+  Sheet,
+  Divider,
+} from "@mui/joy";
+import { Add, Remove, Delete } from "@mui/icons-material";
+import { useCart } from "../contexts/CartContext";
+import { useLanguage } from "../contexts/LanguageContext";
 import Image from "next/image";
 import Link from "next/link";
-import { Minus, Plus, X } from "lucide-react";
-
-// This would typically come from your cart state management
-const cartItems = [
-  {
-    id: "1",
-    name: "Traditional Vyshyvanka",
-    price: 129.99,
-    quantity: 1,
-    size: "M",
-    image: "/products/vyshyvanka-1.jpg",
-  },
-  {
-    id: "2",
-    name: "Modern Embroidered Dress",
-    price: 159.99,
-    quantity: 2,
-    size: "S",
-    image: "/products/dress-1.jpg",
-  },
-];
+import {
+  convertPrice,
+  formatCurrency,
+  getCurrencyFromLanguage,
+} from "../utils/currencyConverter";
 
 export default function CartPage() {
-  const subtotal = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  );
-  const shipping = 15;
-  const total = subtotal + shipping;
+  const { items, removeFromCart, updateQuantity, totalPrice, clearCart } =
+    useCart();
+  const { translations, language } = useLanguage();
+  const t = translations.shop;
+  const currency = getCurrencyFromLanguage(language);
+
+  if (items.length === 0) {
+    return (
+      <Box
+        sx={{
+          minHeight: "100vh",
+          pt: 10,
+          px: 2,
+          maxWidth: "lg",
+          mx: "auto",
+          textAlign: "center",
+        }}
+      >
+        <Typography level="h2" sx={{ mb: 4 }}>
+          {t.cart.emptyCart}
+        </Typography>
+        <Button component="a" href="/shop">
+          {t.cart.continueShopping}
+        </Button>
+      </Box>
+    );
+  }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        pt: 10,
+        px: 2,
+        maxWidth: "lg",
+        mx: "auto",
+      }}
+    >
+      <Typography level="h2" sx={{ mb: 4 }}>
+        {t.cart.title}
+      </Typography>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Cart Items */}
-        <div className="lg:col-span-8">
-          {cartItems.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-gray-500 mb-4">Your cart is empty</p>
-              <Link
-                href="/shop"
-                className="inline-block bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 transition-colors"
-              >
-                Continue Shopping
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {cartItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex gap-6 p-4 bg-white rounded-lg shadow-sm"
-                >
-                  <div className="relative w-24 h-24">
-                    <Image
-                      src={item.image}
-                      alt={item.name}
-                      fill
-                      className="object-cover rounded-md"
-                    />
-                  </div>
+      <Sheet variant="outlined" sx={{ borderRadius: "sm", overflow: "auto" }}>
+        <Table>
+          <thead>
+            <tr>
+              <th style={{ width: "40%" }}>
+                {t.checkout.orderSummary.product}
+              </th>
+              <th>{t.checkout.orderSummary.price}</th>
+              <th>{t.checkout.orderSummary.quantity}</th>
+              <th>{t.checkout.orderSummary.total}</th>
+              <th>{t.checkout.orderSummary.actions}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item) => (
+              <tr key={item.id}>
+                <td>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <Box sx={{ position: "relative", width: 80, height: 80 }}>
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        fill
+                        style={{ objectFit: "cover" }}
+                      />
+                    </Box>
+                    <Typography>{item.name}</Typography>
+                  </Box>
+                </td>
+                <td>
+                  {formatCurrency(convertPrice(item.price, currency), currency)}
+                </td>
+                <td>
+                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                    <IconButton
+                      size="sm"
+                      variant="outlined"
+                      color="neutral"
+                      onClick={() =>
+                        updateQuantity(item.id, Math.max(0, item.quantity - 1))
+                      }
+                    >
+                      <Remove />
+                    </IconButton>
+                    <Typography sx={{ minWidth: "2em", textAlign: "center" }}>
+                      {item.quantity}
+                    </Typography>
+                    <IconButton
+                      size="sm"
+                      variant="outlined"
+                      color="neutral"
+                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    >
+                      <Add />
+                    </IconButton>
+                  </Box>
+                </td>
+                <td>
+                  {formatCurrency(
+                    convertPrice(item.price * item.quantity, currency),
+                    currency
+                  )}
+                </td>
+                <td>
+                  <IconButton
+                    size="sm"
+                    color="danger"
+                    onClick={() => removeFromCart(item.id)}
+                  >
+                    <Delete />
+                  </IconButton>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </Sheet>
 
-                  <div className="flex-1">
-                    <div className="flex justify-between">
-                      <h3 className="font-medium">{item.name}</h3>
-                      <button className="text-gray-400 hover:text-gray-600">
-                        <X className="h-5 w-5" />
-                      </button>
-                    </div>
-                    <p className="text-gray-500 text-sm">Size: {item.size}</p>
-                    <div className="mt-2 flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <button className="p-1 rounded-full hover:bg-gray-100">
-                          <Minus className="h-4 w-4" />
-                        </button>
-                        <span className="w-8 text-center">{item.quantity}</span>
-                        <button className="p-1 rounded-full hover:bg-gray-100">
-                          <Plus className="h-4 w-4" />
-                        </button>
-                      </div>
-                      <p className="font-medium">
-                        ${(item.price * item.quantity).toFixed(2)}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Order Summary */}
-        <div className="lg:col-span-4">
-          <div className="bg-gray-50 rounded-lg p-6">
-            <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
-            <div className="space-y-4">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Shipping</span>
-                <span>${shipping.toFixed(2)}</span>
-              </div>
-              <div className="border-t pt-4 flex justify-between font-semibold">
-                <span>Total</span>
-                <span>${total.toFixed(2)}</span>
-              </div>
-            </div>
-
-            <button className="w-full bg-black text-white mt-6 px-6 py-3 rounded-full hover:bg-gray-800 transition-colors">
-              Proceed to Checkout
-            </button>
-
-            <Link
-              href="/shop"
-              className="block text-center mt-4 text-gray-600 hover:text-gray-800"
-            >
-              Continue Shopping
-            </Link>
-          </div>
-        </div>
-      </div>
-    </div>
+      <Box
+        sx={{
+          mt: 4,
+          p: 3,
+          bgcolor: "background.surface",
+          borderRadius: "sm",
+          boxShadow: "sm",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
+          <Typography level="h4">{t.checkout.orderSummary.total}</Typography>
+          <Typography level="h4">
+            {formatCurrency(convertPrice(totalPrice, currency), currency)}
+          </Typography>
+        </Box>
+        <Divider sx={{ my: 2 }} />
+        <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end" }}>
+          <Button
+            variant="outlined"
+            color="neutral"
+            onClick={clearCart}
+            size="lg"
+          >
+            {t.cart.clearCart}
+          </Button>
+          <Button component={Link} href="/checkout" size="lg">
+            {t.cart.proceedToCheckout}
+          </Button>
+        </Box>
+      </Box>
+    </Box>
   );
 }

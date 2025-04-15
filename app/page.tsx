@@ -5,6 +5,11 @@ import Link from "next/link";
 import { Typography, Button, Grid, Box, Card, AspectRatio } from "@mui/joy";
 import { useLanguage } from "./contexts/LanguageContext";
 import { ShoppingBag } from "@mui/icons-material";
+import {
+  getCurrencyFromLanguage,
+  formatCurrency,
+  convertPrice,
+} from "./utils/currencyConverter";
 
 interface Product {
   name: string;
@@ -15,8 +20,9 @@ interface Product {
 }
 
 export default function Home() {
-  const { translations } = useLanguage();
+  const { translations, language } = useLanguage();
   const t = translations.home;
+  const currency = getCurrencyFromLanguage(language);
 
   const categories = [
     {
@@ -242,7 +248,10 @@ export default function Home() {
                         level="h4"
                         sx={{ color: "primary.500", fontWeight: "bold", mb: 2 }}
                       >
-                        ${product.price.toFixed(2)}
+                        {formatCurrency(
+                          convertPrice(product.price, currency),
+                          currency
+                        )}
                       </Typography>
                       <Button
                         size="lg"

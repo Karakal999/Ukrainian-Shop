@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import ThemeProvider from "./components/ThemeProvider";
-import Navigation from "./components/Navigation";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import { CartProvider } from "./contexts/CartContext";
+import Navigation from "./components/Navigation";
+import FloatingCart from "./components/FloatingCart";
+import ThemeProvider from "./components/ThemeProvider";
 import { nunito } from "./fonts";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -24,12 +26,15 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body>
-        <LanguageProvider>
-          <ThemeProvider>
-            <Navigation />
-            <main>{children}</main>
-          </ThemeProvider>
-        </LanguageProvider>
+        <ThemeProvider>
+          <LanguageProvider>
+            <CartProvider>
+              <Navigation />
+              <main>{children}</main>
+              <FloatingCart />
+            </CartProvider>
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
