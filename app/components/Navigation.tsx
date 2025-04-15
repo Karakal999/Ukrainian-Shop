@@ -63,7 +63,7 @@ export default function Navigation() {
             left: 0,
           }}
         >
-          {t.title}
+          {t.logo}
         </Typography>
 
         {/* Desktop Menu */}
@@ -99,7 +99,7 @@ export default function Navigation() {
         <Box
           sx={{
             display: "flex",
-            gap: 2,
+            gap: 1,
             position: "absolute",
             right: 0,
           }}
@@ -107,8 +107,6 @@ export default function Navigation() {
           <IconButton
             component={Link}
             href="/cart"
-            variant="outlined"
-            color="neutral"
             sx={{ display: { xs: "none", md: "flex" } }}
           >
             <Badge badgeContent={totalItems} color="primary">
@@ -116,8 +114,6 @@ export default function Navigation() {
             </Badge>
           </IconButton>
           <IconButton
-            variant="outlined"
-            color="neutral"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             sx={{ display: { xs: "flex", md: "none" } }}
           >
