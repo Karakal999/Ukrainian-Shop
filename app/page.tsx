@@ -1,103 +1,265 @@
+"use client";
+
 import Image from "next/image";
+import Link from "next/link";
+import { Typography, Button, Grid, Box, Card, AspectRatio } from "@mui/joy";
+import { useLanguage } from "./contexts/LanguageContext";
+import { ShoppingBag } from "@mui/icons-material";
+
+interface Product {
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  category: string;
+}
 
 export default function Home() {
+  const { translations } = useLanguage();
+  const t = translations.home;
+
+  const categories = [
+    {
+      key: "vyshyvankas",
+      image: "/vyshyvanka.jpg",
+      href: "/shop/vyshyvankas",
+    },
+    {
+      key: "modernDesigns",
+      image: "/modern.jpg",
+      href: "/shop/modern",
+    },
+    {
+      key: "accessories",
+      image: "/accessories.jpg",
+      href: "/shop/accessories",
+    },
+  ] as const;
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+    <Box sx={{ minHeight: "100vh" }}>
+      {/* Hero Section */}
+      <Box
+        sx={{
+          position: "relative",
+          height: "80vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          mt: 8,
+        }}
+      >
         <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
+          src="/hero-bg.jpg"
+          alt={t.imageAlts.heroBackground}
+          fill
+          style={{ objectFit: "cover", filter: "brightness(0.4)" }}
           priority
         />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+        <Box
+          sx={{
+            position: "relative",
+            zIndex: 1,
+            textAlign: "center",
+            px: 4,
+          }}
+        >
+          <Typography
+            level="h1"
+            sx={{
+              mb: 3,
+              color: "primary.500",
+              fontWeight: 700,
+            }}
+          >
+            {t.hero.title}
+          </Typography>
+          <Typography
+            level="h3"
+            sx={{
+              mb: 4,
+              color: "white",
+            }}
+          >
+            {t.hero.subtitle}
+          </Typography>
+          <Button
+            component={Link}
+            href="/shop"
+            size="lg"
+            color="primary"
+            sx={{
+              px: 4,
+              py: 1.5,
+            }}
+          >
+            {t.hero.shopNow}
+          </Button>
+        </Box>
+      </Box>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      {/* Featured Categories */}
+      <Box
+        sx={{
+          py: 8,
+          px: 2,
+          maxWidth: "lg",
+          mx: "auto",
+        }}
+      >
+        <Typography
+          level="h2"
+          sx={{
+            textAlign: "center",
+            mb: 6,
+            color: "primary.500",
+          }}
+        >
+          {t.collections.title}
+        </Typography>
+        <Grid container spacing={4}>
+          {categories.map((category) => (
+            <Grid key={category.key} xs={12} md={4}>
+              <Card
+                component={Link}
+                href={category.href}
+                sx={{
+                  height: 360,
+                  position: "relative",
+                  display: "block",
+                  textDecoration: "none",
+                  "&:hover": {
+                    transform: "scale(1.02)",
+                    transition: "transform 0.3s ease-in-out",
+                  },
+                }}
+              >
+                <AspectRatio ratio="1" sx={{ height: "100%" }}>
+                  <Image
+                    src={category.image}
+                    alt={t.collections.categories[category.key]}
+                    fill
+                    style={{ objectFit: "cover" }}
+                  />
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      bgcolor: "rgba(0, 0, 0, 0.6)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      "&:hover": {
+                        bgcolor: "rgba(0, 0, 0, 0.4)",
+                      },
+                    }}
+                  >
+                    <Typography
+                      level="h3"
+                      sx={{
+                        color: "white",
+                      }}
+                    >
+                      {t.collections.categories[category.key]}
+                    </Typography>
+                  </Box>
+                </AspectRatio>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+
+      {/* Featured Products */}
+      <Box
+        sx={{
+          bgcolor: "background.surface",
+          py: 8,
+          px: 2,
+        }}
+      >
+        <Box
+          sx={{
+            maxWidth: "lg",
+            mx: "auto",
+          }}
+        >
+          <Typography
+            level="h2"
+            sx={{
+              textAlign: "center",
+              mb: 6,
+              color: "primary.500",
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+            {t.featuredProducts.title}
+          </Typography>
+          <Grid container spacing={4}>
+            {t.featuredProducts.products.map(
+              (product: Product, index: number) => (
+                <Grid key={index} xs={12} sm={6} md={3}>
+                  <Card
+                    variant="outlined"
+                    sx={{
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      "&:hover": {
+                        "& .MuiAspectRatio-root": {
+                          transform: "scale(1.05)",
+                        },
+                      },
+                    }}
+                  >
+                    <AspectRatio
+                      ratio="1"
+                      sx={{ transition: "transform 0.3s ease-in-out" }}
+                    >
+                      <Image
+                        src={product.image}
+                        alt={product.name}
+                        fill
+                        style={{ objectFit: "cover" }}
+                      />
+                    </AspectRatio>
+                    <Box sx={{ p: 2, flexGrow: 1 }}>
+                      <Typography
+                        level="title-lg"
+                        sx={{ mb: 0.5, minHeight: "3em", lineHeight: "1.5em" }}
+                      >
+                        {product.name}
+                      </Typography>
+                      <Typography
+                        level="body-sm"
+                        sx={{ mb: 2, color: "text.secondary" }}
+                      >
+                        {product.category}
+                      </Typography>
+                      <Typography
+                        level="h4"
+                        sx={{ color: "primary.500", fontWeight: "bold", mb: 2 }}
+                      >
+                        ${product.price.toFixed(2)}
+                      </Typography>
+                      <Button
+                        size="lg"
+                        color="primary"
+                        startDecorator={<ShoppingBag />}
+                        fullWidth
+                      >
+                        {t.hero.shopNow}
+                      </Button>
+                    </Box>
+                  </Card>
+                </Grid>
+              )
+            )}
+          </Grid>
+        </Box>
+      </Box>
+    </Box>
   );
 }

@@ -1,26 +1,52 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ukraine-red: #ff0000;
+  --ukraine-black: #000000;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html,
+body {
+  @apply bg-ukraine-black text-white min-h-screen;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    @apply bg-ukraine-black text-white;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .btn-primary {
+    @apply bg-ukraine-red text-white px-6 py-3 rounded-full hover:bg-red-700 transition-colors duration-200 font-rounded;
+  }
+  
+  .btn-secondary {
+    @apply border-2 border-ukraine-red text-white px-6 py-3 rounded-full hover:bg-ukraine-red/10 transition-colors duration-200 font-rounded;
+  }
+  
+  .input-field {
+    @apply mt-1 block w-full rounded-md border-ukraine-red bg-black/50 text-white focus:border-ukraine-red focus:ring-ukraine-red;
+  }
+
+  .section-title {
+    @apply text-3xl font-bold text-ukraine-red font-rounded mb-6;
+  }
+}
+
+/* Ukrainian-inspired decorative elements */
+.ukrainian-border {
+  border-image: repeating-linear-gradient(
+    45deg,
+    var(--ukraine-red),
+    var(--ukraine-red) 10px,
+    var(--ukraine-black) 10px,
+    var(--ukraine-black) 20px
+  ) 10;
+}
+
+.ukrainian-accent {
+  background: linear-gradient(135deg, var(--ukraine-red) 0%, var(--ukraine-black) 100%);
 }
