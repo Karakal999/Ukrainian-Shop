@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -32,6 +32,7 @@ export default function CheckoutPage() {
 
   const [activeStep, setActiveStep] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [shippingData, setShippingData] = useState({
     firstName: "",
     lastName: "",
@@ -49,9 +50,20 @@ export default function CheckoutPage() {
     cvv: "",
   });
 
+  useEffect(() => {
+    setMounted(true);
+    if (items.length === 0) {
+      router.push("/cart");
+    }
+  }, [items.length, router]);
+
+  // Don't render anything until after mounting to avoid hydration issues
+  if (!mounted) {
+    return null;
+  }
+
   // Redirect to cart if cart is empty
   if (items.length === 0) {
-    router.push("/cart");
     return null;
   }
 
@@ -198,7 +210,8 @@ export default function CheckoutPage() {
       <Stack
         direction="row"
         spacing={2}
-        sx={{ mt: 4, justifyContent: "flex-end" }}
+        justifyContent="flex-end"
+        sx={{ mt: 4 }}
       >
         {activeStep > 0 && (
           <Button
@@ -219,7 +232,7 @@ export default function CheckoutPage() {
             onClick={handlePlaceOrder}
             disabled={isProcessing}
             startDecorator={
-              isProcessing ? <CircularProgress size="sm" /> : null
+              isProcessing && <CircularProgress size="sm" thickness={2} />
             }
           >
             {isProcessing ? t.buttons.processing : t.buttons.placeOrder}
