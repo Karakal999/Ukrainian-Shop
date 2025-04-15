@@ -15,7 +15,7 @@ import {
 import ProductCard from "../components/ProductCard";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useState } from "react";
-import { Collection } from "../translations/shop";
+import { Collection } from "../translations/types";
 import { Product } from "../components/ProductList";
 
 export default function ShopPage() {

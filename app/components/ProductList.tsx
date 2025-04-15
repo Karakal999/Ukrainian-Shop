@@ -4,6 +4,12 @@ import { Box, Typography, Grid, Card, AspectRatio, Button } from "@mui/joy";
 import Image from "next/image";
 import { ShoppingBag } from "@mui/icons-material";
 import { useLanguage } from "../contexts/LanguageContext";
+import {
+  getCurrencyFromLanguage,
+  formatCurrency,
+  convertPrice,
+} from "../utils/currencyConverter";
+import { useMemo } from "react";
 
 export interface Product {
   id: number;
@@ -20,8 +26,31 @@ interface ProductListProps {
 }
 
 export default function ProductList({ title, products }: ProductListProps) {
-  const { translations } = useLanguage();
+  const { translations, language } = useLanguage();
   const t = translations.shop;
+  const currency = getCurrencyFromLanguage(language);
+
+  // Memoize the formatted products to prevent unnecessary recalculations
+  const formattedProducts = useMemo(() => {
+    return products.map((product) => ({
+      ...product,
+      formattedPrice: formatCurrency(
+        convertPrice(product.price, currency),
+        currency
+      ),
+    }));
+  }, [products, currency]);
+
+  if (!Array.isArray(products)) {
+    return (
+      <Typography
+        level="h3"
+        sx={{ textAlign: "center", color: "text.secondary" }}
+      >
+        {t.noResults}
+      </Typography>
+    );
+  }
 
   return (
     <Box
@@ -51,8 +80,8 @@ export default function ProductList({ title, products }: ProductListProps) {
         </Typography>
 
         <Grid container spacing={4}>
-          {products.map((product, index) => (
-            <Grid key={index} xs={12} sm={6} md={4} lg={3}>
+          {formattedProducts.map((product) => (
+            <Grid key={product.id} xs={12} sm={6} md={4} lg={3}>
               <Card
                 variant="outlined"
                 sx={{
@@ -75,6 +104,10 @@ export default function ProductList({ title, products }: ProductListProps) {
                     alt={product.name}
                     fill
                     style={{ objectFit: "cover" }}
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = "/placeholder.jpg"; // Fallback image
+                    }}
                   />
                 </AspectRatio>
                 <Box
@@ -106,8 +139,7 @@ export default function ProductList({ title, products }: ProductListProps) {
                       mb: 2,
                     }}
                   >
-                    {t.products.currency}
-                    {product.price.toFixed(2)}
+                    {product.formattedPrice}
                   </Typography>
                   <Button
                     size="lg"

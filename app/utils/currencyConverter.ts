@@ -7,19 +7,31 @@ export function convertPrice(
   priceUSD: number,
   targetCurrency: Currency
 ): number {
-  if (targetCurrency === "UAH") {
-    return priceUSD * USD_TO_UAH_RATE;
+  if (!priceUSD || isNaN(priceUSD)) {
+    return 0;
   }
-  return priceUSD;
+
+  if (targetCurrency === "UAH") {
+    return Number((priceUSD * USD_TO_UAH_RATE).toFixed(2));
+  }
+  return Number(priceUSD.toFixed(2));
 }
 
 export function formatCurrency(price: number, currency: Currency): string {
-  if (currency === "UAH") {
-    return `₴${price.toFixed(2)}`;
+  if (!price || isNaN(price)) {
+    return currency === "UAH" ? "₴0.00" : "$0.00";
   }
-  return `$${price.toFixed(2)}`;
+
+  const formattedPrice = price.toFixed(2);
+  if (currency === "UAH") {
+    return `₴${formattedPrice}`;
+  }
+  return `$${formattedPrice}`;
 }
 
 export function getCurrencyFromLanguage(language: string): Currency {
-  return language === "uk" ? "UAH" : "USD";
+  if (typeof language !== "string") {
+    return "USD"; // Default to USD if language is invalid
+  }
+  return language.toLowerCase() === "uk" ? "UAH" : "USD";
 }

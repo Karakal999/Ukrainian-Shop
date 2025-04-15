@@ -15,12 +15,14 @@ import {
 import { Menu, Close, ShoppingBag } from "@mui/icons-material";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useCart } from "../contexts/CartContext";
+import type { ShopTranslations } from "../translations/types";
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { translations, toggleLanguage, language } = useLanguage();
   const { totalItems } = useCart();
   const t = translations.navigation;
+  const shopT = translations.shop as ShopTranslations;
 
   const menuItems = [
     { href: "/", label: t.home },
@@ -49,8 +51,11 @@ export default function Navigation() {
           maxWidth: "lg",
           mx: "auto",
           position: "relative",
+          justifyContent: "space-between",
+          width: "100%",
         }}
       >
+        {/* Logo */}
         <Typography
           level="h4"
           component={Link}
@@ -59,8 +64,7 @@ export default function Navigation() {
             textDecoration: "none",
             color: "primary.500",
             fontWeight: "bold",
-            position: "absolute",
-            left: 0,
+            flex: "0 0 auto",
           }}
         >
           {t.logo}
@@ -73,8 +77,8 @@ export default function Navigation() {
           sx={{
             display: { xs: "none", md: "flex" },
             gap: 2,
-            mx: "auto",
-            width: "fit-content",
+            flex: "0 1 auto",
+            justifyContent: "center",
           }}
         >
           {menuItems.map((item) => (
@@ -100,8 +104,7 @@ export default function Navigation() {
           sx={{
             display: "flex",
             gap: 1,
-            position: "absolute",
-            right: 0,
+            flex: "0 0 auto",
           }}
         >
           <IconButton
@@ -167,7 +170,7 @@ export default function Navigation() {
                 <Badge badgeContent={totalItems} color="primary">
                   <ShoppingBag />
                 </Badge>
-                <Typography>{t.cart}</Typography>
+                <Typography>{shopT.cart.title}</Typography>
               </ListItemButton>
             </ListItem>
           </List>

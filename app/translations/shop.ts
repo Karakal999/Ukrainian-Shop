@@ -1,145 +1,4 @@
-import { TranslationModule } from "./types";
-
-interface Collection {
-  title: string;
-  products: Array<{
-    id: number;
-    name: string;
-    description: string;
-    price: number;
-    image: string;
-    category: string;
-  }>;
-}
-
-interface ShopTranslations {
-  title: string;
-  categories: {
-    all: string;
-    vyshyvankas: string;
-    modernDesigns: string;
-    accessories: string;
-    traditionalWear: string;
-  };
-  filters: {
-    title: string;
-    price: string;
-    color: string;
-    size: string;
-    apply: string;
-    clear: string;
-    priceRange: {
-      min: string;
-      max: string;
-    };
-  };
-  sort: {
-    title: string;
-    newest: string;
-    priceHighToLow: string;
-    priceLowToHigh: string;
-    popularity: string;
-  };
-  products: {
-    addToCart: string;
-    removeFromCart: string;
-    currency: string;
-    outOfStock: string;
-    moreDetails: string;
-  };
-  cart: {
-    title: string;
-    viewCart: string;
-    checkout: string;
-    emptyCart: string;
-    continueShopping: string;
-    clearCart: string;
-    proceedToCheckout: string;
-  };
-  checkout: {
-    title: string;
-    steps: {
-      shipping: string;
-      payment: string;
-      confirmation: string;
-    };
-    shippingForm: {
-      title: string;
-      firstName: string;
-      lastName: string;
-      email: string;
-      phone: string;
-      address: string;
-      city: string;
-      country: string;
-      postalCode: string;
-      errors: {
-        required: string;
-        invalidEmail: string;
-        invalidPhone: string;
-        invalidPostalCode: string;
-      };
-    };
-    paymentForm: {
-      title: string;
-      method: string;
-      creditCard: string;
-      paypal: string;
-      cashOnDelivery: string;
-      cardNumber: string;
-      expiryDate: string;
-      cvv: string;
-      errors: {
-        required: string;
-        invalidCardNumber: string;
-        invalidExpiryDate: string;
-        invalidCvv: string;
-      };
-    };
-    orderSummary: {
-      title: string;
-      subtotal: string;
-      shipping: string;
-      total: string;
-      quantity: string;
-      product: string;
-      price: string;
-      actions: string;
-    };
-    buttons: {
-      back: string;
-      next: string;
-      placeOrder: string;
-      processing: string;
-    };
-    errors: {
-      firstName: string;
-      lastName: string;
-      email: string;
-      phone: string;
-      address: string;
-      city: string;
-      country: string;
-      postalCode: string;
-      cardNumber: string;
-      expiryDate: string;
-      cvv: string;
-      orderFailed: string;
-    };
-    confirmation: {
-      title: string;
-      message: string;
-      continueShopping: string;
-      emptyCart: string;
-    };
-  };
-  collections: {
-    vyshyvankas: Collection;
-    modern: Collection;
-    accessories: Collection;
-  };
-  noResults: string;
-}
+import { TranslationModule, ShopTranslations } from "./types";
 
 const shop: TranslationModule<ShopTranslations> = {
   en: {
@@ -266,23 +125,23 @@ const shop: TranslationModule<ShopTranslations> = {
     },
     collections: {
       vyshyvankas: {
-        title: "Traditional Vyshyvankas",
+        title: "Vyshyvankas",
         products: [
           {
             id: 1,
-            name: "Classic Embroidered Vyshyvanka",
+            name: "Traditional Embroidered Vyshyvanka",
             description:
-              "Beautiful handmade vyshyvanka with traditional embroidery patterns",
-            price: 129.99,
+              "Handmade embroidered vyshyvanka with traditional Ukrainian patterns",
+            price: 149.99,
             image: "/products/vyshyvanka1.jpg",
             category: "vyshyvankas",
           },
           {
             id: 2,
-            name: "Modern Vyshyvanka Blouse",
+            name: "Modern Vyshyvanka Dress",
             description:
-              "Contemporary take on traditional Ukrainian embroidery",
-            price: 149.99,
+              "Contemporary vyshyvanka dress with classic embroidery",
+            price: 199.99,
             image: "/products/vyshyvanka2.jpg",
             category: "vyshyvankas",
           },
@@ -293,19 +152,18 @@ const shop: TranslationModule<ShopTranslations> = {
         products: [
           {
             id: 3,
-            name: "Contemporary Ukrainian Dress",
-            description: "Modern dress with Ukrainian folk-inspired elements",
-            price: 159.99,
-            image: "/products/dress1.jpg",
+            name: "Ukrainian Streetwear Hoodie",
+            description: "Modern hoodie with Ukrainian traditional elements",
+            price: 89.99,
+            image: "/products/modern1.jpg",
             category: "modern",
           },
           {
             id: 4,
-            name: "Modern Folk Jacket",
-            description:
-              "Stylish jacket combining traditional motifs with modern design",
-            price: 179.99,
-            image: "/products/dress2.jpg",
+            name: "Contemporary Ukrainian T-Shirt",
+            description: "Stylish t-shirt with modern Ukrainian designs",
+            price: 49.99,
+            image: "/products/modern2.jpg",
             category: "modern",
           },
         ],
@@ -315,35 +173,34 @@ const shop: TranslationModule<ShopTranslations> = {
         products: [
           {
             id: 5,
-            name: "Traditional Jewelry Set",
+            name: "Traditional Ukrainian Necklace",
             description:
-              "Handcrafted jewelry set inspired by Ukrainian traditions",
-            price: 49.99,
-            image: "/products/accessories1.jpg",
+              "Handcrafted necklace with traditional Ukrainian beadwork",
+            price: 79.99,
+            image: "/products/accessory1.jpg",
             category: "accessories",
           },
           {
             id: 6,
-            name: "Woven Belt",
-            description:
-              "Traditional Ukrainian woven belt with geometric patterns",
-            price: 29.99,
-            image: "/products/accessories2.jpg",
+            name: "Modern Ukrainian Scarf",
+            description: "Silk scarf with contemporary Ukrainian patterns",
+            price: 59.99,
+            image: "/products/accessory2.jpg",
             category: "accessories",
           },
         ],
       },
     },
-    noResults: "No products found matching your criteria",
+    noResults: "No products found",
   },
   uk: {
-    title: "Наші Товари",
+    title: "Наші товари",
     categories: {
       all: "Всі",
       vyshyvankas: "Вишиванки",
-      modernDesigns: "Сучасні Дизайни",
+      modernDesigns: "Сучасні дизайни",
       accessories: "Аксесуари",
-      traditionalWear: "Традиційний Одяг",
+      traditionalWear: "Традиційний одяг",
     },
     filters: {
       title: "Фільтри",
@@ -466,37 +323,38 @@ const shop: TranslationModule<ShopTranslations> = {
           {
             id: 1,
             name: "Традиційна вишита вишиванка",
-            description: "Вишиванка ручної роботи з традиційними візерунками",
-            price: 89.99,
+            description:
+              "Вишиванка ручної роботи з традиційними українськими візерунками",
+            price: 149.99,
             image: "/products/vyshyvanka1.jpg",
             category: "vyshyvankas",
           },
           {
             id: 2,
             name: "Сучасна сукня-вишиванка",
-            description: "Сучасне бачення традиційного дизайну вишиванки",
-            price: 129.99,
+            description: "Сучасна сукня-вишиванка з класичною вишивкою",
+            price: 199.99,
             image: "/products/vyshyvanka2.jpg",
             category: "vyshyvankas",
           },
         ],
       },
       modern: {
-        title: "Сучасні Дизайни",
+        title: "Сучасні дизайни",
         products: [
           {
             id: 3,
-            name: "Сучасна блуза з українськими мотивами",
-            description: "Сучасний одяг з елементами українського дизайну",
-            price: 69.99,
+            name: "Українське худі в стилі стрітвір",
+            description: "Сучасне худі з елементами української традиції",
+            price: 89.99,
             image: "/products/modern1.jpg",
             category: "modern",
           },
           {
             id: 4,
-            name: "Сучасна українська сукня",
-            description: "Сучасна сукня з витонченими українськими мотивами",
-            price: 99.99,
+            name: "Сучасна українська футболка",
+            description: "Стильна футболка з сучасними українськими дизайнами",
+            price: 49.99,
             image: "/products/modern2.jpg",
             category: "modern",
           },
@@ -507,28 +365,26 @@ const shop: TranslationModule<ShopTranslations> = {
         products: [
           {
             id: 5,
-            name: "Традиційний набір прикрас",
+            name: "Традиційне українське намисто",
             description:
-              "Набір прикрас ручної роботи, натхненний українськими традиціями",
-            price: 49.99,
-            image: "/products/accessories1.jpg",
+              "Намисто ручної роботи з традиційним українським бісером",
+            price: 79.99,
+            image: "/products/accessory1.jpg",
             category: "accessories",
           },
           {
             id: 6,
-            name: "Тканий пояс",
-            description:
-              "Традиційний український тканий пояс з геометричними візерунками",
-            price: 29.99,
-            image: "/products/accessories2.jpg",
+            name: "Сучасний український шарф",
+            description: "Шовковий шарф із сучасними українськими візерунками",
+            price: 59.99,
+            image: "/products/accessory2.jpg",
             category: "accessories",
           },
         ],
       },
     },
-    noResults: "Не знайдено товарів, що відповідають вашим критеріям",
+    noResults: "Товари не знайдено",
   },
 };
 
-export type { ShopTranslations, Collection };
 export { shop };
