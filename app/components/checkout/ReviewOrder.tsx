@@ -11,7 +11,7 @@ import {
 
 interface ReviewOrderProps {
   items: Array<{
-    id: string;
+    id: string | number;
     name: string;
     price: number;
     quantity: number;
@@ -22,24 +22,14 @@ interface ReviewOrderProps {
 
 export default function ReviewOrder({ items, totalPrice }: ReviewOrderProps) {
   const { translations, language } = useLanguage();
-  const t = translations.shop.checkout;
+  const t = translations.shop;
   const currency = getCurrencyFromLanguage(language);
 
   return (
     <Box>
-      <Typography level="h4" sx={{ mb: 3 }}>
-        {t.confirmation.title}
+      <Typography level="h4" sx={{ mb: 2 }}>
+        {t.checkout.orderSummary.title}
       </Typography>
-      <Typography level="body-md" sx={{ mb: 3 }}>
-        {t.confirmation.message}
-      </Typography>
-
-      <Divider sx={{ my: 3 }} />
-
-      <Typography level="title-lg" sx={{ mb: 2 }}>
-        {t.orderSummary.title}
-      </Typography>
-
       {items.map((item) => (
         <Box
           key={item.id}
@@ -47,9 +37,12 @@ export default function ReviewOrder({ items, totalPrice }: ReviewOrderProps) {
             display: "flex",
             gap: 2,
             mb: 2,
+            p: 2,
+            borderRadius: "sm",
+            bgcolor: "background.level1",
           }}
         >
-          <Box sx={{ position: "relative", width: 60, height: 60 }}>
+          <Box sx={{ position: "relative", width: 80, height: 80 }}>
             <Image
               src={item.image}
               alt={item.name}
@@ -58,11 +51,12 @@ export default function ReviewOrder({ items, totalPrice }: ReviewOrderProps) {
             />
           </Box>
           <Box sx={{ flex: 1 }}>
-            <Typography level="body-sm">{item.name}</Typography>
-            <Typography level="body-xs" sx={{ color: "text.secondary" }}>
-              {t.orderSummary.quantity}: {item.quantity}
-            </Typography>
+            <Typography level="title-md">{item.name}</Typography>
             <Typography level="body-sm">
+              {formatCurrency(convertPrice(item.price, currency), currency)} x{" "}
+              {item.quantity}
+            </Typography>
+            <Typography level="title-sm" sx={{ color: "primary.500" }}>
               {formatCurrency(
                 convertPrice(item.price * item.quantity, currency),
                 currency
@@ -71,47 +65,18 @@ export default function ReviewOrder({ items, totalPrice }: ReviewOrderProps) {
           </Box>
         </Box>
       ))}
-
       <Divider sx={{ my: 2 }} />
-
-      <Box sx={{ mt: 2 }}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            mb: 1,
-          }}
-        >
-          <Typography>{t.orderSummary.subtotal}</Typography>
-          <Typography>
-            {formatCurrency(convertPrice(totalPrice, currency), currency)}
-          </Typography>
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            mb: 1,
-          }}
-        >
-          <Typography>{t.orderSummary.shipping}</Typography>
-          <Typography>
-            {formatCurrency(convertPrice(10, currency), currency)}
-          </Typography>
-        </Box>
-        <Divider sx={{ my: 1 }} />
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            mb: 1,
-          }}
-        >
-          <Typography level="title-lg">{t.orderSummary.total}</Typography>
-          <Typography level="title-lg">
-            {formatCurrency(convertPrice(totalPrice + 10, currency), currency)}
-          </Typography>
-        </Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Typography level="h4">{t.checkout.orderSummary.total}</Typography>
+        <Typography level="h4">
+          {formatCurrency(convertPrice(totalPrice, currency), currency)}
+        </Typography>
       </Box>
     </Box>
   );
